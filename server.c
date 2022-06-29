@@ -17,7 +17,6 @@
 
 void *read_thread(int connfd)
 {
-//	pthread_mutex_lock(&lock);
 
 	// read the buffer and print the data                   
 	printf("inside read thread\n");
@@ -43,7 +42,6 @@ void *read_thread(int connfd)
 
 	printf("read thread exited\n");
 
-//	pthread_mutex_unlock(&lock);
 }
 
 void *write_thread(int connfd)
