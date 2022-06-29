@@ -43,7 +43,6 @@ sleep(1);
 
 void *write_thread(int sockfd)
 {
-//	pthread_mutex_lock(&lock);
 
 	printf("inside write thread\n");
 	char buff[MAX];	// buff to enter the message that we need to send
