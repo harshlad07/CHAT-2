@@ -13,70 +13,46 @@
 #define MAX 100
 #define PORT 8080
 
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 // func to chat between client and server
 
-static void *read_thread(int connfd)
+void *read_thread(int connfd)
 {
-	// read the buffer and print the data                   
-	// edit
-	int flag =1;
+//	pthread_mutex_lock(&lock);
 
+	// read the buffer and print the data                   
+	printf("inside read thread\n");
 
 	char buff[MAX];
 	memset(buff, '\0', MAX);
-//	memset(len, '\0', sizeof(len));
+	sleep(1);
 
-	// read the length of data recieved and store in len buffer
-	//int len;
-/*
-	if((read(connfd, len, sizeof(len))) == -1 )
-	{
-		printf("failed to read the length\n");
-	}
-*/
-	/*
-	   if(*len < MAX)
-	   {
-	   printf("the length of data recieved = %d\n", *len);
-	   }
-	 *len = 0;
-	 */
-
-	// read the msg and store it in buffer
 	if((read(connfd, buff, MAX)) == -1)
 	{
 		printf("failed to read from client \n");
 		//free(len);
-		close(connfd);
+//		close(connfd);
 		//infi_flag = 0;
-		exit(0);
+//		exit(0);
 		//printf("exiting...\n");
 	}
-/*
-	// if recieved empty buffer switch to write mode
-	if(strlen(buff) == 1)
-	{
-		flag = 0;
-		break;
-	}
-
-	// if we write bye to buffer the chat is ended
-	if(! strncmp("bye", buff, 3))
-	{
-		printf("Chat exited...!\n");
-		free(len);
-		close(connfd);
-		exit(0);
-	}
-*/
 
 	printf("Client : %s\n", buff);
 	//read the buffer and print end
+	memset(buff, '\0', MAX);
 	//edit
+
+	printf("read thread exited\n");
+
+//	pthread_mutex_unlock(&lock);
 }
 
-static void *write_thread(int connfd)
+void *write_thread(int connfd)
 {
+
+//	pthread_mutex_lock(&lock);
+
+	printf("inside write thread\n");
 
 	printf("\nServer : ");
 	char buff[MAX];
@@ -84,214 +60,57 @@ static void *write_thread(int connfd)
 
 	// take input and store in buffer
 	int i=0, flag =1;
-	while((buff[i++] = getchar()) != '\n')
-		;
-	buff[i] = '\0';
+//	while((buff[i++] = getchar()) != '\n')
+//
+//		;
+//	buff[i] = '\0';
+//	buff[MAX] = "hello";
+	scanf("%s", buff);
 
-
-	// claculate buffer length and write 
-	//bufflen = i-1;
-	//printf("bufflen = %d\n", bufflen);
-
-	//	*len = bufflen;
-/*
-	if((write(connfd, len, sizeof(len))) == -1)
-	{
-		printf("failed to write length\n");
-	}
-*/
-	/*
-	 *len = 0;
-	// if msg is more than buffer size print error msg and clear buffer
-	if(bufflen > MAX)
-	{
-	printf("msg size exceeded...!\n");
-	memset(buff, '\0', MAX);
-	}
-	*/
-
-	// write the msg stored in buffer
 	if((write(connfd, buff, sizeof(buff))) == -1)
+
 	{
 		printf("failed to write \n");
-//		free(len);
-		close(connfd);
+		//		free(len);
+//		close(connfd);
 		//infi_flag = 0;
-		exit(0);
+//		exit(0);
 		//printf("exiting...\n");
 	}
 
-	// if buffer is empty switch to read mode
-/*	if(strlen(buff) == 1)
-	{
-		flag = 1;
-		break;
-	}
-*/
-	// if we write bye to buffer the chat is ended
-/*	if(! strncmp("bye", buff, 3))
-	{
-		printf("Chat exited...!\n");
-		free(len);
-		close(connfd);
-		exit(0);
-	}
-*/
+	memset(buff, '\0', MAX);
+	printf("write thread exited\n");
+
+//	pthread_mutex_unlock(&lock);
+
 }
 
 void chat_func(int connfd)
 {	
-	int current_size = 0;
 
 	char buff[MAX];
-	//int len;
-	//int *len;
-
-	/*
-	   len = (int *)malloc(sizeof(int));
-
-	   if (len == NULL)
-	   {
-	   printf("failed to allocate memory..\n");
-	   close(connfd);
-	   exit(0);
-	   }
-	   */
-	int flag = 1;
 	int infi_flag = 1;
 
 	printf("\n************ TCP Server *************\n");
 
 	printf("Chat rules : \n 1) Send an empty message when you are done sending messages.\n 2) send 'bye' to exit the chat.\n\n ");
 
+	// threads
+
+			
+	pthread_t thread1, thread2;
 
 	while(infi_flag) 
 	{
-		while(flag == 1)
-		{       /*
-			// read the buffer and print the data 			
-
-
-			memset(buff, '\0', MAX);
-			memset(len, '\0', sizeof(len));
-
-			// read the length of data recieved and store in len buffer
-			//int len;
-
-			if((read(connfd, len, sizeof(len))) == -1 )
-			{
-			printf("failed to read the length\n");
-			}
-
-			if(*len < MAX)
-			{
-			printf("the length of data recieved = %d\n", *len);
-			}
-			 *len = 0;
-
-			// read the msg and store it in buffer
-			if((read(connfd, buff, MAX)) == -1)
-			{
-			printf("failed to read from client \n");
-			free(len);
-			close(connfd);
-			//infi_flag = 0;
-			exit(0);
-			//printf("exiting...\n");
-			}
-
-			// if recieved empty buffer switch to write mode
-			if(strlen(buff) == 1)
-			{
-			flag = 0;
-			break;
-			}
-
-			// if we write bye to buffer the chat is ended
-			if(! strncmp("bye", buff, 3))
-			{
-			printf("Chat exited...!\n");
-			free(len);
-			close(connfd);
-			exit(0);
-			}
-
-
-			printf("Client : %s\n", buff);
-
-			}
-		// while end read mode
-		*/
-
-		// while start of write mode
-		while(flag == 0)
-		{	
-			/*
-			   memset(buff, '\0', sizeof(buff));
-
-			   printf("\nServer : ");
-
-			   int bufflen;
-
-			// take input and store in buffer
-			int i=0;
-			while((buff[i++] = getchar()) != '\n')
-			;	
-			buff[i] = '\0';
-
-
-			// claculate buffer length and write 
-			bufflen = i-1;
-			//printf("bufflen = %d\n", bufflen);
-
-			 *len = bufflen;
-
-			 if((write(connfd, len, sizeof(len))) == -1)
-			 {
-			 printf("failed to write length\n");
-			 }
-
-			 *len = 0;
-
-			// if msg is more than buffer size print error msg and clear buffer
-			if(bufflen > MAX)
-			{
-			printf("msg size exceeded...!\n");
-			memset(buff, '\0', MAX);
-			}	
-
-			// write the msg stored in buffer
-			if((write(connfd, buff, sizeof(buff))) == -1)
-			{
-			printf("failed to write \n");
-			free(len);
-			close(connfd);
-			//infi_flag = 0;
-			exit(0);
-			//printf("exiting...\n");
-			}
-
-			// if buffer is empty switch to read mode
-			if(strlen(buff) == 1)
-			{
-			flag = 1;
-			break;
-			}
-
-			// if we write bye to buffer the chat is ended
-			if(! strncmp("bye", buff, 3))
-			{
-			printf("Chat exited...!\n");
-			free(len);
-			close(connfd);
-			exit(0);
-			}
-			*/
-		}
+		int tid1 = pthread_create(&thread1, NULL, (void *)read_thread, &connfd);
+		sleep(5);
+		int tid2 = pthread_create(&thread2, NULL, (void *)write_thread, &connfd);
+		sleep(5);
+		//	sleep(3);
+	//		pthread_join(thread1, NULL);
+//		pthread_join(thread2, NULL);
 	}
-//	free(len);
 }
-
 
 int main()
 {
@@ -348,11 +167,11 @@ int main()
 	}
 	else
 		printf("server accepted the client...\n");
+	
+
 	// Function to chat between client and server
 	chat_func(connfd);
 
 	// After chatting close the socket
 	close(sockfd);
-}
-
 }
