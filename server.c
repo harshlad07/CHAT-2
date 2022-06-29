@@ -13,7 +13,6 @@
 #define MAX 100
 #define PORT 8080
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 // func to chat between client and server
 
 void *read_thread(int connfd)
@@ -50,8 +49,6 @@ void *read_thread(int connfd)
 void *write_thread(int connfd)
 {
 
-//	pthread_mutex_lock(&lock);
-
 	printf("inside write thread\n");
 
 	printf("\nServer : ");
@@ -81,7 +78,6 @@ void *write_thread(int connfd)
 	memset(buff, '\0', MAX);
 	printf("write thread exited\n");
 
-//	pthread_mutex_unlock(&lock);
 
 }
 
