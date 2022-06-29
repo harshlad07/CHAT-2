@@ -14,12 +14,10 @@
 #define MAX 100
 #define PORT 8080
 
-//pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 void *read_thread(int sockfd)
 {
-//	pthread_mutex_lock(&lock);
-
+	
 	char buff[MAX];	// buff to enter the message that we need to send
 	memset(buff, '\0', MAX);
 	printf("inside read thread\n");
@@ -40,8 +38,6 @@ sleep(1);
 	memset(buff, '\0', MAX);
 
 	printf("exit read thread\n");
-
-//	pthread_mutex_unlock(&lock);
 
 }
 
@@ -69,9 +65,9 @@ void *write_thread(int sockfd)
 	if((write(sockfd, buff, sizeof(buff))) == -1)
 	{
 		printf("failed to write data\n");
-//		free(len);
+	//	free(len);
 	//	close(sockfd);
-		//infi_flag = 0;
+	//	infi_flag = 0;
 	//	exit(0);
 		//printf("exiting..\n");
 
@@ -81,7 +77,6 @@ void *write_thread(int sockfd)
 
 	printf("write thread exited\n");
 
-//	pthread_mutex_unlock(&lock);
 }
 
 
